@@ -71,6 +71,9 @@ typedef struct {
   int start;
   int end;
   int size;
+#ifdef JSMN_VAL_SIZE
+  int vsize;
+#endif
 #ifdef JSMN_PARENT_LINKS
   int parent;
 #endif
@@ -112,6 +115,9 @@ static jsmntok_t *jsmn_alloc_token(jsmn_parser *parser, jsmntok_t *tokens,
   tok = &tokens[parser->toknext++];
   tok->start = tok->end = -1;
   tok->size = 0;
+#ifdef JSMN_VAL_SIZE
+  tok->vsize = 0;
+#endif
 #ifdef JSMN_PARENT_LINKS
   tok->parent = -1;
 #endif
@@ -127,6 +133,9 @@ static void jsmn_fill_token(jsmntok_t *token, const jsmntype_t type,
   token->start = start;
   token->end = end;
   token->size = 0;
+#ifdef JSMN_VAL_SIZE
+  token->vsize = 0;
+#endif
 }
 
 /**
@@ -299,6 +308,9 @@ JSMN_API int jsmn_parse(jsmn_parser *parser, const char *js, const size_t len,
         t->size++;
 #ifdef JSMN_PARENT_LINKS
         token->parent = parser->toksuper;
+#endif
+#ifdef JSMN_VAL_SIZE
+        t->vsize = 0;
 #endif
       }
       token->type = (c == '{' ? JSMN_OBJECT : JSMN_ARRAY);
